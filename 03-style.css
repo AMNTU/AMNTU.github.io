@@ -1,0 +1,31 @@
+.viz{
+  background-color: #deebf7;
+}
+
+#tooltip {
+  font-size: 12px;
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 2.5px;
+  border:1px solid black;
+  background: rgb(250, 250, 250);
+  background: rgba(250, 250, 250, 0.8);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+path.area{
+  stroke-width:0.3;
+  fill: #ffffbf;
+  stroke: black;
+}
+path.area.highlight{
+  fill:#78c679;
+}
