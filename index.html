@@ -8,9 +8,9 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+
     <style>
-        hr.short-width {
+        hr.short-width { /* Horizontal ruler after the main title */
             width: 30%;
             margin: auto;
             padding: 20px 0;
@@ -27,7 +27,7 @@
             height: 490px !important; /* Total height */
             margin-right: 20px; /* Add margin to separate from bar charts */
             text-align: right; /* Center the line chart title */
-      }
+        }
         .line {
           fill: none;
           stroke: steelblue;
@@ -36,6 +36,12 @@
         canvas {
             width: 200px !important; /* Width for each chart */
             height: 400px; /* Keep height consistent */
+        }
+        .title {
+            white-space: nowrap;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
         }
         .city-labels {
             display: flex; /* Flexbox for alignment */
@@ -53,266 +59,205 @@
     </style>
 </head>
 <body class="m-5 bg-primary-subtle">
-<div class="container px-2">
-    <div class="row gx-2">
-        <div class="col-12 text-center">
-            <h1 class="display-5">How much help do the world's poorest countries need?</h1>
-        </div>
-        <hr class="short-width">
-        <ul class="list-inline text-center">
-            <li class="list-inline-item">
-                <a href="index.html" class="btn btn-primary">Introduction</a></li>
-            <li class="list-inline-item">
-                <a href="population.html" class="btn btn-secondary">Population</a></li>
-            <li class="list-inline-item">
-                <a href="economics.html" class="btn btn-secondary">Economics</a></li>
-            <li class="list-inline-item">
-                <a href="education.html" class="btn btn-secondary">Education</a></li>
-            <li class="list-inline-item">
-                <a href="conclusion.html" class="btn btn-secondary">Conclusion</a></li>
-        </ul>
+    <div class="col-12 text-center"><h1 class="display-5">How much help do the world's poorest countries need?</h1></div>
+    <hr class="short-width">
+    <ul class="list-inline text-center">
+        <li class="list-inline-item">
+            <a href="index.html" class="btn btn-primary">Introduction</a></li>
+        <li class="list-inline-item">
+            <a href="population.html" class="btn btn-secondary">Population</a></li>
+        <li class="list-inline-item">
+            <a href="economics.html" class="btn btn-secondary">Economics</a></li>
+        <li class="list-inline-item">
+            <a href="education.html" class="btn btn-secondary">Education</a></li>
+        <li class="list-inline-item">
+            <a href="conclusion.html" class="btn btn-secondary">Conclusion</a></li>
+    </ul>
+    <div class="p-2" style="flex-shrink: 0; text-align: justify;">
+        <p>Since 1990, the rapid economic growth of China and India has tremendously eradicated extreme poverty for more than 1 billion 
+        people. The world was on track to eliminate extreme poverty until COVID-19 came along and after 2020, the trend reversed. 
+        World Bank's Poverty and Shared Prosperity 2022 report showed poverty rising for the first time since decades of decline. 
+        Economic inequality, measured by the Gini index, is the unequal income distribution among people in a society and is correlated 
+        to poverty. 1.7 billion people (20% of the world population) are living in high-inequality economies. Closing the income inequality 
+        gap will help accelerate the progress in reducing poverty.</p>
     </div>
-    <div class="p-2" style="flex-shrink: 0;"> <!-- Text container -->
-      <p>Since 1990, the rapid economic growth of China and India has tremendously eradicated extreme poverty for more than 1 billion people. The world was on track to eliminate extreme poverty until COVID-19 came along and after 2020, the trend reversed. World Bank's Poverty and Shared Prosperity 2022 report showed poverty rising for the first time since decades of decline. Economic inequality, measured by the Gini index, is the unequal income distribution among people in a society and is correlated to poverty. 1.7 billion people (20% of the world population) are living in high-inequality economies. Closing the income inequality gap will help accelerate the progress in reducing poverty.</p>
-  </div>
   
     <div class="row d-flex align-items-center" style="font-size: 15px;">
-      <h2 style="font-size: 20px; margin-left: 50px">Top 15 Poorest Countries Between 2000-2022</h2>
-      <div class="p-2 col-6" id="d1"></div> <!-- Left chart -->
-      <div class="p-2 col-6" id="d2"></div> <!-- Right chart -->
-  </div>
-            <div class="chart-container">
-                <canvas id="leftBarChart" width="200" height="400"></canvas>
-                <div class="city-labels">
-                    <div class="city-label">Congo</div>
-                    <div class="city-label">Central African Republic</div>
-                    <div class="city-label">Zambia</div>
-                    <div class="city-label">Burundi</div>
-                    <div class="city-label">Niger</div>
-                    <div class="city-label">Kenya</div>
-                    <div class="city-label">Chad</div>
-                    <div class="city-label">Togo</div>
-                    <div class="city-label">Guinea-Bissau</div>
-                    <div class="city-label">Burkina Faso</div>
-                    <div class="city-label">Syria</div>
-                    <div class="city-label">Cameroon</div>
-                    <div class="city-label">Mali</div>
-                    <div class="city-label">Gambia</div>
-                    <div class="city-label">India</div>
-                </div>
-                <canvas id="rightBarChart" width="200" height="400"></canvas>
-                <div class="line-chart-container">
-                    <h2 style="font-size: 20px; margin-right: 150px">Extreme Poverty Over Time</h2>
-                  <svg id="lineChart" width="0"></svg>
-              </div>
-            </div>
-        </div>
-
+        <h2 style="font-size: 20px; margin-left: 50px; margin-bottom: 30px;">Top 15 Poorest Countries Between 2000-2022</h2>
     </div>
-</div>
+    <div class="chart-container">
+        <svg id="leftBarChart" width="200" height="400"></svg>
+        <svg id="rightBarChart" width="200" height="400"></svg>
+        <div class="line-chart-container">
+            <h2 style="font-size: 20px; margin-right: 150px; margin-bottom: 30px;">Extreme Poverty Over Time</h2>
+            <svg id="lineChart" width="0"></svg>
+        </div>
+    </div>
+    <script>
+        // Bar charts (verticle) - Gini Coefficient and Extreme Poverty
+        const margin = {top: 20, right: 20, bottom: 30, left: 50}
+        const width = 600 - margin.left - margin.right
+        const height = 400 - margin.top - margin.bottom
+        const dataLeft = [
+            { country: 'Congo', value: -78.9 },
+            { country: 'Central Africa', value: -65.7 },
+            { country: 'Zambia', value: -64.3 },
+            { country: 'Burundi', value: -62.1 },
+            { country: 'Niger', value: -50.6 },
+            { country: 'Kenya', value: -36.1 },
+            { country: 'Chad', value: -30.8 },
+            { country: 'Togo', value: -26.6 },
+            { country: 'Guinea-Bissau', value: -26 },
+            { country: 'Burkina Faso', value: -25.5 },
+            { country: 'Syria', value: -24.8 },
+            { country: 'Cameroon', value: -23.5 },
+            { country: 'Mali', value: -20.8 },
+            { country: 'Gambia', value: -17.2 },
+            { country: 'India', value: -12.9 }
+        ]
+        const dataRight = [
+            { country: 'Congo', value: 44.7 },
+            { country: 'Central Africa', value: 43 },
+            { country: 'Zambia', value: 51.5 },
+            { country: 'Burundi', value: 37.5 },
+            { country: 'Niger', value: 32.9 },
+            { country: 'Kenya', value: 38.7 },
+            { country: 'Chad', value: 37.4 },
+            { country: 'Togo', value: 37.9 },
+            { country: 'Guinea-Bissau', value: 33.4 },
+            { country: 'Burkina Faso', value: 37.4 },
+            { country: 'Syria', value: 26.6 },
+            { country: 'Cameroon', value: 42.2 },
+            { country: 'Mali', value: 35.7 },
+            { country: 'Gambia', value: 38.8 },
+            { country: 'India', value: 32.8 }
+        ]
 
-<script>
-    // Left Pointing Bar Chart
-    const ctxLeft = document.getElementById('leftBarChart').getContext('2d');
-    const leftBarChart = new Chart(ctxLeft, {
-        type: 'bar',
-        data: {
-            labels: [
-                'Congo', 'Central African Republic', 'Zambia', 'Burundi', 'Niger', 
-                'Kenya', 'Chad', 'Togo', 'Guinea-Bissau', 'Burkina Faso', 
-                'Syria', 'Cameroon', 'Mali', 'Gambia', 'India'
-            ],
-            datasets: [{
-                label: '% Extreme Poverty',
-                data: [-78.9, -65.7, -64.3, -62.1, -50.6, -36.1, -30.8, -26.6, -26, -25.5, -24.8, -23.5, -20.8, -17.2, -12.9],
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    min: -100,
-                    max: 0,
-                    title: {
-                        display: true,
-                    },
-                    ticks: {
-                        callback: (value) => Math.abs(value)
-                    }
-                },
-                y: {
-                    display: false // Hide the Y-axis
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${Math.abs(context.raw)}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: true,
-                    anchor: 'start',
-                    align: 'start',
-                    formatter: (value) => Math.abs(value),
-                    color: 'black',
-                    font: {
-                        size: 10
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
+        function createBarChart(data, svgId, isLeftChart) {
+            const svg = d3.select(svgId)
+                .attr("width", width/2 + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left + 50},${margin.top})`)
 
-    // Right Pointing Bar Chart
-    const ctxRight = document.getElementById('rightBarChart').getContext('2d');
-    const rightBarChart = new Chart(ctxRight, {
-        type: 'bar',
-        data: {
-            labels: [
-                'Congo', 'Central African Republic', 'Zambia', 'Burundi', 'Niger', 
-                'Kenya', 'Chad', 'Togo', 'Guinea-Bissau', 'Burkina Faso', 
-                'Syria', 'Cameroon', 'Mali', 'Gambia', 'India'
-            ],
-            datasets: [{
-                label: 'Gini Index',
-                data: [44.7, 43, 51.5, 37.5, 32.9, 38.7, 37.4, 37.9, 33.4, 37.4, 26.6, 42.2, 35.7, 38.8, 32.8],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    min: 0,
-                    max: 80,
-                    title: {
-                        display: true,
-                    },
-                    ticks: {
-                        callback: (value) => Math.abs(value)
-                    }
-                },
-                y: {
-                    display: false // Hide the Y-axis
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${context.raw}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: true,
-                    anchor: 'end',
-                    align: 'end',
-                    formatter: (value) => Math.abs(value),
-                    color: 'black',
-                    font: {
-                        size: 10
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
+            const x = d3.scaleLinear()
+                .domain(isLeftChart ? [-100, 0] : [0, 80])
+                .range([0, width/4])
 
-    // Line chart
-    var margin = {top: 0, right: 0, bottom: 50, left: 50}
-    width = 600,
-    height = 350;
+            const y = d3.scaleBand()
+                .domain(data.map(d => d.country))
+                .range([0, height])
+                .padding(0.1)
 
-    var x = d3.scaleLinear().range([0, width]); // Use a linear scale for years
-    var y = d3.scaleLinear().range([height, 0]);
+            svg.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d => Math.abs(d)));
 
+            if(!isLeftChart) {              // Add Y axis only for the right bar
+                svg.append("g")
+                    .attr("class", "y-axis")
+                    .call(d3.axisLeft(y).ticks(15))
+                    .selectAll("text")                  // Select all text elements in the y-axis
+                    .attr("x", -50)                   // Shift left to compensate for half the text length
+                    .attr("text-anchor", "middle") }    // Center align the text 
 
-    var valueline = d3.line()
-        .x(function(d) { return x(d.Year); })
-        .y(function(d) { return y(d.World_Poverty); });
+            svg.selectAll(".bar")           // Draw the bars
+                .data(data)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("y", d => y(d.country))
+                .attr("height", y.bandwidth())
+                .attr("x", isLeftChart ? x(0) : 0)
+                .attr("width", d => isLeftChart ? 0 : 0)
+                .attr("fill", isLeftChart ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)')
+                .transition()               // Start transition
+                .duration(2000)             // Duration in milliseconds (2 seconds)
+                .attr("width", d => isLeftChart ? Math.abs(x(d.value) - x(0)) : x(d.value)); // Final width
 
-    var svg = d3.select(".line-chart-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+            if (isLeftChart) {              // Adjust the x position for left-pointing bars
+                svg.selectAll(".bar")
+                    .attr("x", d => x(0) - Math.abs(x(d.value) - x(0))) }
 
-    d3.csv("01-World_data.csv", function(error, data) {
-      if (error) throw error;
+            svg.selectAll(".label")         // Add the values labels for each bar
+                .data(data).enter().append("text")
+                .attr("class", "label")
+                .attr("x", d => isLeftChart ? x(d.value) - 30 : x(d.value) + 5)
+                .attr("y", d => y(d.country) + y.bandwidth() / 2)
+                .attr("dy", ".35em")
+                .text(d => isLeftChart ? Math.abs(d.value) + "%" : Math.abs(d.value))
+                .style("fill", "black")
+                .style("font-size", "10px")
 
+            svg.append("g")                 // Add the bar charts' titles
+                .attr("transform", "translate(" + -5 + "," + -5 + ")")
+                .append("text")
+                .attr("class", "title")
+                .text(isLeftChart ? "% Pop in Extreme Poverty" : "Gini Coefficient")
+        }
+        createBarChart(dataLeft, "#leftBarChart", true)     // Create left-pointing bar chart
+        createBarChart(dataRight, "#rightBarChart", false)  // Create right-pointing bar chart
 
-    data.forEach(function(d) {
-          d.Year = +d.Year; // Convert year string to number
-          d.World_Poverty = +d.World_Poverty; // Ensure value is a number
-      });
+        // Line chart - % Population World Extreme Poverty
+        const x = d3.scaleLinear().range([0, width])    // Use a linear scale for years
+        const y = d3.scaleLinear().range([height, 0])   // Use a linear scale for population
 
+        const valueline = d3.line()                     // Define the line for drawing the graph
+            .x(d => x(d.Year))
+            .y(d => y(d.World_Poverty))
 
-      x.domain(d3.extent(data, function(d) { return d.Year; }));
-      y.domain([0, d3.max(data, function(d) { return d.World_Poverty; })]);
+        const svg = d3.select(".line-chart-container").append("svg")    // Define the svg container
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`)
+            
+        d3.csv("01-World_data.csv").then(data => {      // Read the data from 01-World_data.csv
+            data.forEach(d => {
+                d.Year = +d.Year;                       // Convert year string to number
+                d.World_Poverty = +d.World_Poverty      // Ensure value is a number
+            })
 
-  /* svg.append("path"): Appends a <path> element to the SVG, which will represent the line in the chart.
-            .data([data]): Binds the data to the path, wrapping it in an array (since the line generator expects an array).
-            .attr("class", "line"): Assigns the line class to the path element for styling.
-            .attr("d", valueline): Uses the valueline generator to compute the d attribute for the path, defining the shape of the line based on the data.*/
-// Draw the line
-    svg.selectAll(".line").remove(); // Remove the existing line (if any)
-       svg.append("path")
-          .data([data])
-          .attr("class", "line")
-          .attr("d", valueline);
+            x.domain(d3.extent(data, d => d.Year));
+            y.domain([0, d3.max(data, d => d.World_Poverty)])
 
-    svg.selectAll(".x-axis").remove(); // Remove existing x-axis if any
-    svg.append("g")
-          .attr("class", "x-axis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x).tickFormat(d3.format("d"))); // Use plain integer format for years
+            svg.append("path")                          // Plot the line on the graph
+                .data([data])
+                .attr("class", "line")
+                .attr("d", valueline)
+                .attr("stroke-dasharray", "5000")       // Set dash array for drawing effect
+                .attr("stroke-dashoffset", "5000")      // Start offset for the dash
+                .transition()                           // Start transition
+                .duration(5000)                         // Duration in milliseconds (1 second)
+                .attr("stroke-dashoffset", "0")
 
-// Redraw the Y Axis
-    svg.selectAll(".y-axis").remove(); // Remove existing y-axis if any
-    svg.append("g")
-        .attr("class", "y-axis")
-        .call(d3.axisLeft(y));
+            svg.append("g")                             // Draw the X axis
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).tickFormat(d3.format("d"))) // Use plain integer format for years
 
+            svg.append("g")                             // Draw the Y axis
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(y).tickFormat(d => d + "%"))
 
- // Add X-axis title
-     svg.append("text")
-          .attr("x", width / 2)  // Position it in the center
-          .attr("y", height + 50)  // Position it below the X-axis
-          .attr("text-anchor", "middle")  
-          .style("font-size", "16px")  // Font size for the X-axis title
-          .text("Year");
+            svg.append("text")                          // Add X-axis title
+                .attr("x", width / 2)                   // Position it in the center
+                .attr("y", height + 50)                 // Position it below the X-axis
+                .attr("text-anchor", "middle")  
+                .style("font-size", "16px")             // Font size for the X-axis title
+                .text("Year")
+           
+            svg.append("text")                          // Add Y-axis title
+                .attr("transform", "rotate(-90)")       // Rotate the text for the Y-axis
+                .attr("y", -40)                         // Adjust Y position (40px offset for padding)
+                .attr("x", 0 - (height / 2))            // Center it vertically on the Y-axis
+                .attr("text-anchor", "middle")  
+                .style("font-size", "12px")             // Font size for the Y-axis title
+                .text("% of world population surviving on less than US$2.15/day/pax")  
 
-  // Add Y-axis title
-      svg.append("text")
-          .attr("transform", "rotate(-90)")  // Rotate the text for the Y-axis
-          .attr("y", -30)  // Adjust Y position (20px offset for padding)
-          .attr("x", 0 - (height / 2))  // Center it vertically on the Y-axis
-          .attr("text-anchor", "middle")  
-          .style("font-size", "12px")  // Font size for the Y-axis title
-          .text("Population surviving on less than US$2.15 per day per person");    
-
-});
-</script>
-</body>
+        }).catch(error => {
+            console.error('Error loading or processing data:', error)
+        })
+        </script>
+    </body>
 </html>

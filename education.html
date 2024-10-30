@@ -9,30 +9,42 @@
   </head>
   <style>
     .arc text {
-      font: 10px sans-serif;
-      text-anchor: middle;
+        font: 10px sans-serif;
+        text-anchor: middle;
     }
     .arc path {
-      stroke: #fff;
+        stroke: #fff;
     }
     .title {
-      fill: teal;
-      font-weight: bold;
+        fill: teal;
+        font-weight: bold;
     }
     .small-legend {
-      fill: #083B91;
-      font-size: x-small;
-      font-style: italic;
+        fill: #083B91;
+        font-size: x-small;
+        font-style: italic;
     }
     .pie {
-      height: 300px;
-      border: "border-success";
+        height: 300px;
+        border: "border-success";
+    }
+    .pieLabel {
+        font-size: 9px;
+        fill: #083B91;
+        text-anchor: middle;
+    }
+    .pieCenter {
+        font-size: 36px;
+        fill: #083B91;
+        font-weight: bold;
+        text-anchor: middle;
+        text-align: center;
     }
     hr.short-width {
-      width: 30%;
-      margin: auto;
-      padding: 20px 0;
-      color: #4385F5;
+        width: 30%;
+        margin: auto;
+        padding: 20px 0;
+        color: #4385F5;
     }
   </style>
   <body class="m-5 bg-primary-subtle">
@@ -50,21 +62,20 @@
           <li class="list-inline-item">
             <a href="conclusion.html" class="btn btn-secondary">Conclusion</a></li>
         </ul>
-        <div class="row gap-0 row-gap-2">
-          <div class="p-2 col-5" id="map"></div>
-          <div class="p-2 col-7">
+    <div class="row gap-0 row-gap-2">
+        <div class="p-2 col-5" id="map"></div>
+        <div class="p-2 col-7">
             <div class="pie" id="pie"></div>
-            <div class="p-2">
-              A large population of people in the poorest countries are living without basic life essentials and infrastructure, such as 
-              electricity and sanitation. Obviously, investments in <strong>education</strong> are also very low in these countries. 
-              To get out of the vicious poverty cycle, the education level must reach a state where the productivity capacity of the people 
-              is increased adequately to support and accelerate economic growth. It has been highlighted in the 1990 World Development Report 
-              that the most effective way to help the poor is by (1) leveraging their labour for economic growth, (2) investing in their 
-              education and healthcare and (3) providing well-targeted safety nets.
+            <div class="p-2" style="text-align: justify;">
+                <h3>Basic Needs And Education Are The Keys Out Of Poverty</h3>
+                <p>A large population of people in the poorest countries are living without <strong>basic</strong> life essentials and infrastructure, 
+                such as electricity and sanitation. Obviously, investments in <strong>education</strong> are also very low in these countries. 
+                To get out of the vicious poverty cycle, the education level must reach a state where the productivity capacity of the people 
+                is increased adequately to support and accelerate economic growth.</p>
             </div>
-          </div>
-      </div>
-      <div id="tooltip" style="position: absolute; visibility: hidden; background: white; border: 1px solid black; padding: 5px; border-radius: 3px;"></div>
+        </div>
+    </div>
+        <div id="tooltip" style="position: absolute; visibility: hidden; background: white; border: 1px solid black; padding: 5px; border-radius: 3px;"></div>
       <script>
           let width = 500
           let height = 500
@@ -302,8 +313,18 @@
                     .text(function(d, i) { 
                         return ["% illiterate", "", ""][i]
                     })
-                    .attr("text-anchor", "middle")  // Center the text
-                    .style("fill", "#083B91")
+                    .attr("class", "pieLabel")
+
+                svgDonut1.append("g")                   // Add the illiterate/incomplete % value inside the donut hole
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .append("text")
+                    .text(data[0].toFixed(0) + "%")
+                    .attr("class", "pieCenter")
+                svgDonut1.append("g")
+                    .attr("transform", "translate(" + -30 + "," + 25 + ")")
+                    .append("text")
+                    .text("illiterate")
+                    .attr("fill", "#083B91")
                 
                 svgDonut1.append("g")
                     .attr("transform", "translate(" + -70 + "," + (-height / 4 + 20 ) + ")")
@@ -321,8 +342,18 @@
                     .text(function(d, i) { 
                         return ["% incomplete", "", ""][i]
                     })
-                    .attr("text-anchor", "middle") // Center the text
-                    .style("fill", "#083B91")
+                    .attr("class", "pieLabel")
+
+                svgDonut2.append("g")                   // Add the illiterate/incomplete % value inside the donut hole
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .append("text")
+                    .text(data[3].toFixed(0) + "%")
+                    .attr("class", "pieCenter")
+                svgDonut2.append("g")
+                    .attr("transform", "translate(" + -40 + "," + 25 + ")")
+                    .append("text")
+                    .text("incomplete")
+                    .attr("fill", "#083B91")
                 
                 svgDonut2.append("g")
                     .attr("transform", "translate(" + -80 + "," + (-height / 4 + 20 ) + ")")
@@ -340,8 +371,18 @@
                     .text(function(d, i) { 
                         return ["% incomplete", "", ""][i]
                     })
-                    .attr("text-anchor", "middle") // Center the text
-                    .style("fill", "#083B91")
+                    .attr("class", "pieLabel")
+
+                svgDonut3.append("g")                   // Add the illiterate/incomplete % value inside the donut hole
+                    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+                    .append("text")
+                    .text(data[6].toFixed(0) + "%")
+                    .attr("class", "pieCenter")
+                svgDonut3.append("g")
+                    .attr("transform", "translate(" + -40 + "," + 25 + ")")
+                    .append("text")
+                    .text("incomplete")
+                    .attr("fill", "#083B91")
 
                 svgDonut3.append("g")
                     .attr("transform", "translate(" + -80 + "," + (-height / 4 + 20 ) + ")")

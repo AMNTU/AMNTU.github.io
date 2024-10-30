@@ -1,65 +1,70 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>How much help do the world's poorest countries need?</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="//d3js.org/topojson.v1.min.js"></script>
-    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
-    <script src="https://d3js.org/queue.v1.min.js"></script> <!-- Include d3-queue -->
-    <link rel="stylesheet" type="text/css" href="03-style.css"> 
-  </head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>How much help do the world's poorest countries need?</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
     <style>
-      hr.short-width {
-      width: 30%;
-      margin: auto;
-      padding: 20px 0;
-      color: #4385F5;
-      }
-       /* Add basic styles for the map and chart containers */
-       #map-container, #chart-container {
-        width: 50%; /* Adjust the width as needed */
+        hr.short-width {
+            width: 30%;
+            margin: auto;
+            padding: 20px 0;
+            color: #4385F5;
+        }
+        #map-container, #chart-container {          /* Add basic styles for the map and chart containers */
+            width: 50%;                             /* Adjust the width as needed */
             display: inline-block;
             vertical-align: top;
         }
         #map-container {
-        width: 30%; /* Makes it responsive to the SVG's width */
-        height: auto;
-        margin-left: 200px; /* Adjust this value to shift the map as needed */
-        display: inline-block;
-        position: relative;
-    }
+            width: 30%;                             /* Makes it responsive to the SVG's width */
+            height: auto;
+            margin-left: 50px;                     /* Adjust this value to shift the map as needed */
+            margin-right: 50px;
+            display: inline-block;
+            position: relative;
+        }
         svg {
-            width: 100%; /* Ensures the SVG scales within the container */
+            width: 100%;                            /* Ensures the SVG scales within the container */
         }
         #chart-container {
-            width: 45%;
-            height: 100%
-            margin-left: 200px; /* Adds a 200px gap to the left of the chart */
-            background-color: #f0f0f0; /* Set to a light grey color */
+            height: 100%;
         }
-
         #my_dataviz {
             width: 90%;
+        }            
+        #chart-title {                              /* Reduce the margin for the chart title and description */
+            margin: 0;                              /* Remove all margins */
+            padding: 0;                             /* Remove all padding */
         }
-
-        /* Reduce the margin for the chart title and description */
-        #chart-title {
-          margin: 0; /* Remove all margins */
-          padding: 0; /* Remove all padding */
+        #tooltip {
+            font-size: 12px;
+            position: absolute;
+            width: auto;
+            height: auto;
+            padding: 2.5px;
+            border:1px solid black;
+            background: rgb(250, 250, 250);
+            background: rgba(250, 250, 250, 0.8);
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            pointer-events: none;
         }
-
-        #chart-description {
-          margin: 0; /* Remove all margins */
-          padding: 0; /* Remove all padding */
-          font-size: 14px;
-          color: #555;
-          text-align: left;
+        #tooltip.hidden {
+            display: none;
         }
-
-      
+        path.area {
+            stroke-width:0.3;
+            fill: #ffffbf;
+            stroke: black;
+        }
+        path.area.highlight {
+            fill:#78c679;
+        }
         .hidden {
             display: none;
         }
@@ -72,295 +77,233 @@
         .highlight {
             stroke: #000;
             stroke-width: 2px;
-        }
-        /* Smaller font size for data labels */
-        .data-label {
-        font-size: 1px; /* Adjust the size as needed */
+        }    
+        .data-label {                                   /* Smaller font size for data labels */
+            font-size: 12px;                            /* Adjust the size as needed */
+            fill: #4385F5;
+            font-weight: bold;
         }
     </style>
-  </head>
-  <body class="m-5 bg-primary-subtle">
-  <div class="container px-2">
-    <div class="row gx-2">
-      <div class="col-12 text-center">
-        <h1 class="display-5">How much help do the world's poorest countries need?</h1>
-      </div>
-      <hr class="short-width">
+    </head>
+    <body class="m-5 bg-primary-subtle">
+        <div class="col-12 text-center"><h1 class="display-5">How much help do the world's poorest countries need?</h1></div>
+        <hr class="short-width">
         <ul class="list-inline text-center">
-    	  <li class="list-inline-item">
+            <li class="list-inline-item">
             <a href="index.html" class="btn btn-secondary">Introduction</a></li>
-          <li class="list-inline-item">
-    	    <a href="population.html" class="btn btn-secondary">Population</a></li>
-          <li class="list-inline-item">
+            <li class="list-inline-item">
+            <a href="population.html" class="btn btn-secondary">Population</a></li>
+            <li class="list-inline-item">
             <a href="economics.html" class="btn btn-primary">Economics</a></li>
-          <li class="list-inline-item">
+            <li class="list-inline-item">
             <a href="education.html" class="btn btn-secondary">Education</a></li>
-          <li class="list-inline-item">
+            <li class="list-inline-item">
             <a href="conclusion.html" class="btn btn-secondary">Conclusion</a></li>
         </ul>
-    </div>
     <div class="row gap-0 row-gap-2">
-      <div class="p-2 col-6" id="d1"></div>
-      <div class="p-2 col-6" id="d2"></div>
+        <div class="p-2 col-5" id="map-container"></div>
+        <div class="p-2 col-7" id="chart-container">
+            <h3 id="chart-title"></h3>
+            <div id="my_dataviz"></div>             <!-- Chart SVG will be appended here -->
+            <div style="text-align: justify;">
+                <h3>Rising Inflation Contributes To Increasing Poverty</h3>
+                <p>Over the past decade, many African countries have experienced a significant increase in the Consumer Price Index (CPI), 
+                reflecting rising inflation rates that have had profound implications for their economies and populations. 
+                This trend has been particularly pronounced during the COVID-19 pandemic, which disrupted supply chains, increased production 
+                costs, and heightened demand for essential goods.</p>
+                <p> This inflation surge has underscored the vulnerability of African economies, revealing the urgent need for effective 
+                monetary policies and economic resilience strategies to mitigate the impacts of rising prices on their populations.</p>
+            </div>
+        </div>
     </div>
-  </div>
+    <div id="tooltip" class="hidden"><p><span id="value"></span></p></div>
+    <script>
+        var margin = {top: 10, right: 10, bottom: 10, left: 10},            // Define variables for the map
+            padding = {top: 10, right: 10, bottom: 10, left: 10},
+            vizWidth = 480,                                                 // Adjusted for inline display
+            vizHeight = 500,
+            plotWidth = vizWidth - margin.left - margin.right,
+            plotHeight = vizHeight - margin.top - margin.bottom,
+            panelWidth = plotWidth - padding.left - padding.right,
+            panelHeight = plotHeight - padding.top - padding.bottom
 
-   <!-- Map Container -->
-   <div id="map-container"></div>
+        var lineChartMargin = {top: 50, right: 30, bottom: 50, left: 60},   // Variables for the line chart
+            lineChartWidth = 460 - lineChartMargin.left - lineChartMargin.right,
+            lineChartHeight = 400 - lineChartMargin.top - lineChartMargin.bottom
 
-   <!-- Chart Container -->
-   <div id="chart-container">
-       <!-- Chart title -->
-       <h2 id="chart-title"></h2>
-       <!-- Chart SVG will be appended here -->
-       <div id="my_dataviz"></div>
-          
-        <!-- Text below the line chart -->
-      <p id="chart-description">Over the past decade, many African countries have experienced a significant increase in the Consumer Price Index (CPI), 
-        reflecting rising inflation rates that have had profound implications for their economies and populations. 
-        This trend has been particularly pronounced during the COVID-19 pandemic, which disrupted supply chains, increased production costs, and heightened demand for essential goods. </p>
-      <p id="chart-description"> This inflation surge has underscored the vulnerability of African economies, 
-          revealing the urgent need for effective monetary policies and economic resilience strategies to mitigate the impacts of rising prices on their populations. </p>
-      </div>
-
-   <!-- Tooltip Div -->
-   <div id="tooltip" class="hidden">
-       <p><span id="value"></span></p>
-   </div>
-
-   <script>
-    // Define variables for the map
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        padding = {top: 10, right: 10, bottom: 10, left: 10},
-        vizWidth = 480, // Adjusted for inline display
-        vizHeight = 500,
-        plotWidth = vizWidth - margin.left - margin.right,
-        plotHeight = vizHeight - margin.top - margin.bottom,
-        panelWidth = plotWidth - padding.left - padding.right,
-        panelHeight = plotHeight - padding.top - padding.bottom;
-
-    // Variables for the line chart
-    var lineChartMargin = {top: 50, right: 30, bottom: 50, left: 60},
-        lineChartWidth = 460 - lineChartMargin.left - lineChartMargin.right,
-        lineChartHeight = 400 - lineChartMargin.top - lineChartMargin.bottom;
-
-    // Load both the GeoJSON and CSV data
-    d3.queue()
-        .defer(d3.json, '03-custom.geo_Africa.json')
-        .defer(d3.csv, '03-Economics_data.csv')
-        .await(ready);
-
-    function ready(error, mapData, Econ_data) {
-        if (error) throw error;
-
-        // Parse the food data
-        Econ_data.forEach(function(d) {
-            d.year = +d.year;
-            d.n = +d.n;
+        Promise.all([                                   // Load both the GeoJSON and CSV data using Promises
+            d3.json('03-custom.geo_Africa.json'),
+            d3.csv('03-Economics_data.csv')
+        ]).then(ready).catch(function(error) {
+            console.error('Error loading data:', error)
         });
 
-        // Create the map
-        createMap(mapData, Econ_data);
-        // Create the line chart
-        createLineChart(Econ_data);
-    }
-
-    function createMap(mapData, Econ_data) {
-        var viz = d3.select("#map-container").append("svg")
-        .classed("viz", true)
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${vizWidth} ${vizHeight}`);
-
-    var plot = viz.append("g")
-        .attr("class","plot")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var panel = plot.append("g")
-        .attr("class","panel")
-        .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
-
-    // Define the projection and path generator
-    var projection = d3.geoMercator().fitSize([panelWidth, panelHeight], mapData),
-        geoPath = d3.geoPath().projection(projection);
-
-    // Create a dictionary (or set) for fast lookup of countries with economic data
-    var countriesWithData = new Set(Econ_data.map(function(d) { return d.name; }));
-
-
-    // Draw the map
-    panel.selectAll("path")
-        .data(mapData.features)
-        .enter()
-        .append("path")
-            .attr("d", geoPath)
-            .style("fill", function(d) {
-                // Compare GeoJSON country name with CSV country names in Econ_data
-                return countriesWithData.has(d.properties.name) ? "red" : "#ccc"; // Red for countries with data, grey otherwise
+        function ready([mapData, Econ_data]) {
+            Econ_data.forEach(function(d) {             // Parse the economic data
+                d.year = +d.year
+                d.n = +d.n
             })
-            .classed("area", true)
-            .on('mouseover', function(d) {
-                d3.select(this).classed("highlight", true);
-                drawTooltip(d);
-                updateLineChart(d.properties.name);
-            })
-            .on('mouseout', function() {
-                d3.select("#tooltip").classed("hidden", true);
-                d3.select(this).classed("highlight", false);
-            });
-    }
-    
-
-
-    // Tooltip function
-    function drawTooltip(d) {
-        var xPosition = d3.event.pageX + 5;
-        var yPosition = d3.event.pageY + 5;
-        d3.select("#tooltip")
-            .classed("hidden", false)
-            .style("left", xPosition + "px")
-            .style("top", yPosition + "px")
-            .select("#value")
-            .text(d.properties.name);
-    }
-
-    function createLineChart(Econ_data) {
-        // Adjust the line chart margins here
-        var lineChartMargin = {top: 50, right: 30, bottom: 50, left: 60}; // Reduced bottom margin
-        // Define the width and height with the adjusted margins
-      //var lineChartWidth = 460 - lineChartMargin.left - lineChartMargin.right;
-      //var lineChartHeight = 360 - lineChartMargin.top - lineChartMargin.bottom;
-      var lineChartWidth = document.getElementById("chart-container").clientWidth;
-      var lineChartHeight = lineChartWidth * 0.6;
-      // List of groups (one group per country)
-        var allGroup = d3.map(Econ_data, function(d){ return(d.name); }).keys();
-
-        // Create the SVG for the line chart
-        var svgLineChart = d3.select("#my_dataviz")
-        .append("svg")
-        .attr("viewBox", `0 0 ${lineChartWidth} ${lineChartHeight}`)
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .append("g")
-        .attr("transform", "translate(" + lineChartMargin.left + "," + -lineChartMargin.bottom +")");
-    
-
-        // X axis
-        var x = d3.scaleLinear()
-            .domain(d3.extent(Econ_data, function(d) { return d.year; }))
-            .range([0, lineChartWidth]);
-        svgLineChart.append("g")
-            .attr("transform", "translate(0," + lineChartHeight + ")")
-            .call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")));
-
-        // X-axis label
-        svgLineChart.append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", lineChartWidth / 2)
-            .attr("y", lineChartHeight + lineChartMargin.bottom - 5)
-            .text("Year");
-
-        // Y axis
-        var y = d3.scaleLinear()
-            .domain([0, d3.max(Econ_data, function(d) { return +d.n; })])
-            .range([lineChartHeight, 0]).nice();
-        svgLineChart.append("g")
-            .call(d3.axisLeft(y));
-
-        // Y-axis label
-        svgLineChart.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 0 - lineChartMargin.left + 15) 
-            .attr("x", 0 - (lineChartHeight / 2))
-            .attr("dy", "1em")
-            .style("text-anchor", "middle")
-            .text("Consumer Price Index");
-
-        // Initialize the line with the first group
-        var line = svgLineChart
-            .append('g')
-            .append("path")
-                .datum(Econ_data.filter(function(d){ return d.name == allGroup[0]; }))
-                .attr("d", d3.line()
-                    .x(function(d) { return x(d.year); })
-                    .y(function(d) { return y(+d.n); }))
-                .attr("stroke", "#69b3a2")
-                .style("stroke-width", 4)
-                .style("fill", "none");
-
-        // Initialize data labels
-        var labels = svgLineChart.selectAll(".data-label")
-            .data(Econ_data.filter(function(d){ return d.name == allGroup[0]; }))
-            .enter()
-            .append("text")
-                .attr("class", "data-label")
-                .attr("x", function(d) { return x(d.year); })
-                .attr("y", function(d) { return y(+d.n) - 5; })
-                .attr("text-anchor", "middle")
-                .text(function(d) { return d.n; });
-
-        // Function to update the line chart
-    function updateLineChart(selectedCountry) {
-            var dataFilter = Econ_data.filter(function(d){ return d.name == selectedCountry; });
-
-            // Update chart title
-            d3.select("#chart-title").text("Consumer Price Index Over The Years In " + selectedCountry);
-
-            // Handle the case where no data is available
-            if (dataFilter.length == 0) {
-                line
-                    .datum([])
-                    .transition()
-                    .duration(1000)
-                    .attr("d", null);
-
-                svgLineChart.selectAll(".data-label").remove();
-                return;
-            }
-
-            // Update the line
-            line
-                .datum(dataFilter)
-                .transition()
-                .duration(1000)
-                .attr("d", d3.line()
-                    .x(function(d) { return x(d.year); })
-                    .y(function(d) { return y(+d.n); }))
-                .attr("stroke", "#69b3a2");
-
-            // Update data labels
-            labels = svgLineChart.selectAll(".data-label")
-                .data(dataFilter);
-
-            labels.enter()
-                .append("text")
-                .merge(labels)
-                .attr("class", "data-label")
-                .attr("text-anchor", "middle")
-                .transition()
-                .duration(1000)
-                .attr("x", function(d) { return x(d.year); })
-                .attr("y", function(d) { return y(+d.n) - 5; })
-                .text(function(d) { return d.n; });
-
-            labels.exit().remove();
+            createMap(mapData, Econ_data)               // Create the map
+            createLineChart(Econ_data)                  // Create the line chart
         }
 
-        // Initialize the line chart with the first country
-        updateLineChart(allGroup[0]);
+        function createMap(mapData, Econ_data) {
+            var viz = d3.select("#map-container").append("svg")
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .attr("viewBox", `0 0 ${vizWidth} ${vizHeight}`)
 
-        // Make the updateLineChart function accessible globally
-        window.updateLineChart = updateLineChart;
-    }
-    window.addEventListener("resize", function() {
-        vizWidth = document.getElementById("map-container").clientWidth;
-        vizHeight = vizWidth * 0.6;
-    
-        lineChartWidth = document.getElementById("chart-container").clientWidth;
-        lineChartHeight = lineChartWidth * 0.6 - lineChartMargin.top - lineChartMargin.bottom; 
-    
-        // Call the function to redraw or resize elements
-        createMap(mapData, Econ_data);
-        createLineChart(Econ_data);
-    });
-  </script>
-  </body>
+            var plot = viz.append("g")
+                .attr("class", "plot")
+                .attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+            var panel = plot.append("g")
+                .attr("class", "panel")
+                .attr("transform", `translate(${padding.left}, ${padding.top})`)
+
+            var projection = d3.geoMercator().fitSize([panelWidth, panelHeight], mapData),  // Define the projection and path generator
+                geoPath = d3.geoPath().projection(projection)
+
+            var countriesWithData = new Set(Econ_data.map(d => d.name))     // Create a dictionary for fast lookup of economic data
+
+            panel.selectAll("path")                     // Draw the map
+                .data(mapData.features)
+                .enter()
+                .append("path")
+                    .attr("d", geoPath)
+                    .style("fill", d => countriesWithData.has(d.properties.name) ? "red" : "#ccc") // Red for countries with data, grey otherwise
+                    .classed("area", true)
+                    .on('mouseover', function(event, d) {
+                        d3.select(this).classed("highlight", true)
+                        drawTooltip(event, d)
+                        updateLineChart(d.properties.name)
+                    })
+                    .on('mouseout', function() {
+                        d3.select("#tooltip").classed("hidden", true)
+                        d3.select(this).classed("highlight", false)
+                    })
+        }
+
+        function drawTooltip(event, d) {                // Tooltip function
+            var xPosition = event.pageX + 5
+            var yPosition = event.pageY + 5
+            d3.select("#tooltip")
+                .classed("hidden", false)
+                .style("left", `${xPosition}px`)
+                .style("top", `${yPosition}px`)
+                .select("#value")
+                .text(d.properties.name)
+        }
+
+        function createLineChart(Econ_data) {
+            var lineChartWidth = document.getElementById("chart-container").clientWidth
+            var lineChartHeight = lineChartWidth * 0.6
+            var allGroup = d3.map(Econ_data, d => d.name).keys()
+
+            var svgLineChart = d3.select("#my_dataviz") // Set up the line chart
+                .append("svg")
+                .attr("viewBox", `0 0 ${lineChartWidth} ${lineChartHeight}`)
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .append("g")
+                .attr("transform", `translate(${lineChartMargin.left}, ${-lineChartMargin.bottom})`)
+
+            var x = d3.scaleLinear()                    // Set up the X axis
+                .domain(d3.extent(Econ_data, d => d.year))
+                .range([0, lineChartWidth])
+            svgLineChart.append("g")                    // Add the X axis
+                .attr("transform", `translate(0, ${lineChartHeight})`)
+                .call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")))
+            svgLineChart.append("text")                 // Add the X axis label
+                .attr("text-anchor", "middle")
+                .attr("x", lineChartWidth / 2)
+                .attr("y", lineChartHeight + lineChartMargin.bottom - 5)
+                .text("Year")
+
+            var y = d3.scaleLinear()                    // Set up the Y axis
+                .domain([0, d3.max(Econ_data, d => +d.n)])
+                .range([lineChartHeight, 0]).nice()
+            svgLineChart.append("g")                    // Add the Y axis
+                .call(d3.axisLeft(y))
+            svgLineChart.append("text")                 // Add the Y-axis label
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - lineChartMargin.left + 5)
+                .attr("x", 0 - (lineChartHeight / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("Consumer Price Index")
+
+            var line = svgLineChart.append('g')         // Initialize the line with the first group
+                .append("path")
+                    .datum(Econ_data.filter(d => d.name == allGroup[0]))
+                    .attr("d", d3.line()
+                        .x(d => x(d.year))
+                        .y(d => y(+d.n)))
+                    .attr("stroke", "#69b3a2")
+                    .style("stroke-width", 4)
+                    .style("fill", "none")
+
+            var labels = svgLineChart.selectAll(".data-label")      // Initialize data labels
+                .data(Econ_data.filter(d => d.name == allGroup[0]))
+                .enter()
+                .append("text")
+                    .attr("class", "data-label")
+                    .attr("x", d => x(d.year))
+                    .attr("y", d => y(+d.n) - 5)
+                    .attr("text-anchor", "middle")
+                    .text(d => d.n)
+
+            function updateLineChart(selectedCountry) {             // Function to update the line chart
+                var dataFilter = Econ_data.filter(d => d.name == selectedCountry)
+
+                d3.select("#chart-title").text("Consumer Price Index Over The Years In " + selectedCountry) // Update chart title
+
+                if (dataFilter.length == 0) {                       // Handle the case where no data is available
+                    line
+                        .datum([])
+                        .transition()
+                        .duration(1000)
+                        .attr("d", null);
+                    svgLineChart.selectAll(".data-label").remove();
+                    return
+                }
+
+                line                                                // Update the line
+                    .datum(dataFilter)
+                    .transition()
+                    .duration(1000)
+                    .attr("d", d3.line()
+                        .x(d => x(d.year))
+                        .y(d => y(+d.n)))
+                    .attr("stroke", "#69b3a2")
+
+                labels = svgLineChart.selectAll(".data-label")      // Update data labels
+                    .data(dataFilter)
+                labels.enter().append("text")
+                    .merge(labels)
+                    .attr("class", "data-label")
+                    .attr("text-anchor", "middle")
+                    .transition()
+                    .duration(1000)
+                    .attr("x", d => (d.year % 5 === 0 ? x(d.year) : null))      // Return only values for every 5 years
+                    .attr("y", d => (d.year % 5 === 0 ? y(+d.n) - 5 : null))    // Return only values for every 5 years
+                    .text(d => d.n.toFixed(1))                                  // Fix the values at 1 decimal place
+
+                labels.exit().remove()
+            }
+            updateLineChart(allGroup[0])                            // Initialize the line chart with the first country
+            window.updateLineChart = updateLineChart                // Make the updateLineChart function accessible globally
+        }
+
+        window.addEventListener("resize", function() {
+            vizWidth = document.getElementById("map-container").clientWidth;
+            vizHeight = vizWidth * 0.6;
+
+            lineChartWidth = document.getElementById("chart-container").clientWidth;
+            lineChartHeight = lineChartWidth * 0.6 - lineChartMargin.top - lineChartMargin.bottom; 
+
+            // Call the function to redraw or resize elements
+            createMap(mapData, Econ_data);
+            createLineChart(Econ_data);
+        })
+    </script>
+    </body>
 </html>
