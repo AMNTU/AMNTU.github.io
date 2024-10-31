@@ -16,26 +16,14 @@
             padding: 20px 0;
             color: #4385F5;
         }
-        .chart-container {
-            display: flex;
-            width: 100%; /* Full width of the container */
-            height: 400px; /* Total height */
-            align-items: center; /* Center charts vertically */
-        }
-        .line-chart-container {
-            width: 100%; /* Full width of the container */
-            height: 490px !important; /* Total height */
-            margin-right: 20px; /* Add margin to separate from bar charts */
-            text-align: right; /* Center the line chart title */
-        }
         .line {
           fill: none;
           stroke: steelblue;
           stroke-width: 2px;
         }
         canvas {
-            width: 200px !important; /* Width for each chart */
-            height: 400px; /* Keep height consistent */
+            width: 200px !important;    /* Width for each chart */
+            height: 400px;              /* Keep height consistent */
         }
         .title {
             white-space: nowrap;
@@ -73,7 +61,7 @@
         <li class="list-inline-item">
             <a href="conclusion.html" class="btn btn-secondary">Conclusion</a></li>
     </ul>
-    <div class="p-2" style="flex-shrink: 0; text-align: justify;">
+    <div class="p-2" style="width:1200px; margin: 0 auto; text-align: justify;">
         <p>Since 1990, the rapid economic growth of China and India has tremendously eradicated extreme poverty for more than 1 billion 
         people. The world was on track to eliminate extreme poverty until COVID-19 came along and after 2020, the trend reversed. 
         World Bank's Poverty and Shared Prosperity 2022 report showed poverty rising for the first time since decades of decline. 
@@ -81,16 +69,25 @@
         to poverty. 1.7 billion people (20% of the world population) are living in high-inequality economies. Closing the income inequality 
         gap will help accelerate the progress in reducing poverty.</p>
     </div>
-  
-    <div class="row d-flex align-items-center" style="font-size: 15px;">
-        <h2 style="font-size: 20px; margin-left: 50px; margin-bottom: 30px;">Top 15 Poorest Countries Between 2000-2022</h2>
+    <div class="row gap-0 row-gap-2" style="width:1200px; margin: 0 auto;">
+        <div class="p-2 col-md-6" style="margin: 0 auto;">
+            <h5 style="text-align: center; margin-bottom: 20px;">Top 15 Poorest Countries Between 2000-2022</h5>
+        </div>
+        <div class="p-2 col-md-6" style="margin: 0 auto;">
+            <h5 style="text-align: center; margin-bottom: 20px;">Extreme Poverty Over Time</h5>
+        </div>
     </div>
-    <div class="chart-container">
-        <svg id="leftBarChart" width="200" height="400"></svg>
-        <svg id="rightBarChart" width="200" height="400"></svg>
-        <div class="line-chart-container">
-            <h2 style="font-size: 20px; margin-right: 150px; margin-bottom: 30px;">Extreme Poverty Over Time</h2>
-            <svg id="lineChart" width="0"></svg>
+    <div class="row gap-0 row-gap-2" style="width:1200px; margin: 0 auto;">
+        <div class="p-2 row gap-0 col-md-6" style="display: flex; justify-content:center">
+            <div style="width: 200px; height: 400px;">
+                <svg id="leftBarChart" width="200" height="400"></svg>
+            </div>
+            <div style="width: 200px; height: 400px">
+                <svg id="rightBarChart" width="200" height="400"></svg>
+            </div>
+        </div>
+        <div class="p-2 col-md-6" style="margin: 0 auto;">
+            <svg id="lineChart"></svg>
         </div>
     </div>
     <script>
@@ -138,7 +135,7 @@
                 .attr("width", width/2 + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform", `translate(${margin.left + 50},${margin.top})`)
+                .attr("transform", (isLeftChart) ? "translate(50, 20)" : "translate(85, 20)")
 
             const x = d3.scaleLinear()
                 .domain(isLeftChart ? [-100, 0] : [0, 80])
@@ -206,7 +203,7 @@
             .x(d => x(d.Year))
             .y(d => y(d.World_Poverty))
 
-        const svg = d3.select(".line-chart-container").append("svg")    // Define the svg container
+        const svg = d3.select("#lineChart")             // Define the svg container
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
