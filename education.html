@@ -135,15 +135,15 @@
             const projection = d3.geoMercator()
             .center([20.470964, 10.591497])         // Set the center coordinates of the map
             .scale(scaleValue)                      // Adjust the scale to fit the map nicely
-            .translate([(width / 2) + 70, height / 2.5]);    // Set the translation to position the map
+            .translate([(width / 2) + 70, height / 2.5])    // Set the translation to position the map
             
             const pathGenerator = d3.geoPath()
-            .projection(projection);    // Create a path generator that will convert the GeoJSON coordinates into SVG path strings
+            .projection(projection)     // Create a path generator that will convert the GeoJSON coordinates into SVG path strings
 
             const svg = d3.select("#map")
             .append("svg")
             .attr("width", width)
-            .attr("height", height);
+            .attr("height", height)
 
             svg.selectAll("path")       // Render the map by creating SVG path elements for each feature in the GeoJSON data
             .data(data[0].features)
@@ -151,14 +151,14 @@
             .append("path")
             .attr("d", pathGenerator)
             .style("fill", function (d) {           // set the color of each country
-                d.total = values.get(d.properties.name) || 0;
-                return colorScale(d.total);
+                d.total = values.get(d.properties.name) || 0
+                return colorScale(d.total)
                 })
             .style("stroke", "transparent")
             .attr("class", function(d){ return "Country" } )
             .style("opacity", .7)
             .on("mouseleave", mouseLeave )
-            .on("mouseover", mouseOver );
+            .on("mouseover", mouseOver )
 
             svg.append("g")
                 .attr("transform", "translate(" + 140 + "," + 15 + ")")
