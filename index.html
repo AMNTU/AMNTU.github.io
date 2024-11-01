@@ -29,19 +29,6 @@
             font-size: 10px;
             font-weight: 700;
         }
-        .city-labels {
-            display: flex; /* Flexbox for alignment */
-            flex-direction: column; /* Align labels vertically */
-            margin-top: 67px; /* Adjust as necessary */
-            height: 100%; /* Full height to fit all labels */
-            padding: 0 0px; /* Add padding to the sides */
-        }
-        .city-label {
-            margin: 3px 0; /* Add margin for spacing between labels */
-            white-space: nowrap; /* Prevent wrapping of individual city names */
-            text-align: center; /* Center text within the label */
-            font-size: 10px;
-        }
     </style>
 </head>
 <body class="m-5 bg-primary-subtle">
@@ -154,7 +141,7 @@
                     .attr("class", "y-axis")
                     .call(d3.axisLeft(y).ticks(15))
                     .selectAll("text")                  // Select all text elements in the y-axis
-                    .attr("x", -50)                   // Shift left to compensate for half the text length
+                    .attr("x", -50)                     // Shift left to compensate for half the text length
                     .attr("text-anchor", "middle") }    // Center align the text 
 
             svg.selectAll(".bar")           // Draw the bars
