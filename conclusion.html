@@ -15,14 +15,19 @@
             color: #4385F5;
         }
         .axis-labels {
-            font-size: 14px;            /* Adjust the size as needed */
+            font-size: 14px;      
             fill: #777777;
             font-style: italic;
         }
         .legend-labels {
-            font-size: 14px;            /* Adjust the size as needed */
+            font-size: 14px;           
             fill: #083B91;
             font-style: italic;
+        }
+        text.redText {
+            font-size: 32px;
+            fill: #FF5555;
+            opacity: 0.75;
         }
     </style>
 </head>
@@ -102,6 +107,36 @@
                     .style("stroke", "transparent")
                 tooltip.style("visibility", "hidden")
             }
+      
+            svg.append("defs")                                      // Define the gradient for the rectangle
+                .append("linearGradient")
+                .attr("id", "transparentToPink")
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%") 
+                .attr("y2", "0%")
+                .selectAll("stop")
+                .data([
+                    { offset: "0%", color: "rgba(202, 222, 252, 0)" },
+                    { offset: "100%", color: "pink" }
+                ])
+                .enter().append("stop")
+                .attr("offset", d => d.offset)
+                .attr("style", d => `stop-color:${d.color}; stop-opacity:1`);
+
+            svg.append("rect")                                      // Add a rectangle with the gradient
+                .attr("x", (width / 2) - 95)
+                .attr("y", -20)
+                .attr("width", (width / 2))
+                .attr("height", height + 20)
+                .attr("fill", "url(#transparentToPink)")
+            
+            svg.append('text')                                      // Add the Income Inequality text
+                .attr('class', 'redText')
+                .attr("transform", "rotate(-90)")
+                .attr('y', width - 110)
+                .style('text-anchor', 'end')
+                .html("Income Inequality") 
 
             let xScale = d3.scaleLinear()                           // set up the x axis scale
                 .domain([20, d3.max(data, d => +d.Gini)])
