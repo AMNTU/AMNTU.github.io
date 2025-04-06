@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDB Resale Housing Price Guidance</title>
+</head>
+<body>
+    <h1>HDB Resale Housing Price Guidance</h1>
+    <p>This app provides a guide for the offering price of a HDB resale flat. The aim is to help buyers make a reasonable offer price for the flat of their choice. </p>
+    <form action="/predict" method="POST">
+        <label for="postcode">Postal Code:</label><br>
+        <input type="text" id="postcode" name="postcode"><br><br>
+        <label for="sqm">Floor Area (in sqm):</label><br>
+        <input type="text" id="sqm" name="sqm"><br><br>
+        <label for="level">Floor Level:</label><br>
+        <select id="level" name="level">
+        <option value="0">Low</option>
+        <option value="1">Mid</option>
+        <option value="2">High</option>
+        </select><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

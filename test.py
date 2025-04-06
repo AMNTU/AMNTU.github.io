@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template, render_template_string
+from flask import Flask, request, render_template_string
 from pyngrok import ngrok
-import threading
+import os
 from sklearn.preprocessing import LabelEncoder
 # from pytorch_tabnet.tab_model import TabNetRegressor  (this works but not in MacOS due to Segmentation fault 11)
 # import xgboost as xgb                                 (this works but not in MacOS due to Segmentation fault 11)
@@ -18,15 +18,32 @@ import multiprocessing
 # tabnet_model = TabNetRegressor()
 # tabnet_model.load_model('tabnet_model.zip')
 
-# Look up df_prepared transaction dataset to find the price_sqm of the latest transaction that satisfies the conditions
-def get_price_sqm(town, distance, level, sqm):
-    upper, lower = sqm + 3, sqm - 3                   # Define the upper and lower range for the floor area sqm
+# # Look up df_prepared transaction dataset to find the price_sqm of the latest transaction that satisfies the conditions
+# def get_price_sqm(town, distance, level, sqm, lease):
+#     upper, lower = sqm + 3, sqm - 3                     # Define the upper and lower range for the floor area sqm
+#     print(town, distance, level, sqm, lease)
+#     for index in df_prepared.index[::-1]:
+#       row = df_prepared.loc[index]
+#       if( row['town'] == town and
+#           row['distance_km'] == (distance) and
+#           row['level'] == level and
+#           lower <= row['floor_area_sqm'] <= upper and   # Check if floor area is within a range instead of fixed integer to allow for slight input error
+#           row['remaining_lease'] >= lease):             # Check if remaining lease is the same or greater
+#           price_sqm = row['price_sqm']
+#           print(f"Found matching row with price_sqm: {price_sqm}")
+#           break
+#     return price_sqm
+
+def get_price_sqm(town, distance, level, sqm, lease):
+    upper, lower = sqm + 3, sqm - 3                         # Define the upper and lower range for the floor area sqm
+    print(town, distance, level, sqm, lease)
     for index in df_prepared.index[::-1]:
       row = df_prepared.loc[index]
       if( row['town'] == town and
           row['distance_km'] == distance and
           row['level'] == level and
-          lower <= row['floor_area_sqm'] <= upper):   # Check if floor area is within a range instead of fixed integer to allow for slight input error
+          lower <= row['floor_area_sqm'] <= upper and       # Check if floor area is within a range instead of fixed integer to allow for slight input error
+          lease <= row['remaining_lease'] <= (lease + 36)): # Check if remaining lease matches within last 3 years
           price_sqm = row['price_sqm']
           print(f"Found matching row with price_sqm: {price_sqm}")
           break
@@ -42,7 +59,7 @@ def lookup_values(features, postal_code):
       features[2] = (99 - (datetime.datetime.now().year - year_completed)) * 12                             # Calculate remaining lease in months
       features[3] = df_prepared.loc[df_prepared['town'] == features[0], 'mature'].iloc[0]                   # Retrieve town maturity
       features[6] = (df_hdbInfo.loc[df_hdbInfo['postalcode'] == postal_code, 'distance_km'].iloc[0]) * 1000 # Retrieve the distance to MRT
-      features[5] = get_price_sqm(features[0], features[6], features[4], features[1])                       # Retrieve the price per sqm
+      features[5] = get_price_sqm(features[0], features[6], features[4], features[1], features[2])                       # Retrieve the price per sqm
       features[7] = datetime.datetime.now().year                                                            # Retrieve the current year
       features[8] = ((features[7] - 2017) * 12) + datetime.datetime.now().month                             # Retrieve the number of months since baseline Jan 2017
 
@@ -93,7 +110,7 @@ def predict_house_price(features, postal_code):
     xgboost_result = xgboost_queue.get()
     tabnet_result = tabnet_queue.get()
 
-    print(xgboost_result, tabnet_result)
+    print(f"S${xgboost_result}, S${tabnet_result}")
     return int((xgboost_result + tabnet_result) / 2)
 
     # xgb_prediction = xgb_model.predict(features)          (this works but not in MacOS due to Segmentation fault 11)
@@ -132,7 +149,7 @@ if __name__ == "__main__":
     # features = [9, 65, 734, 1, 2, 6000, 500, 2025, 100]       # Initialise the array
     # print(predict_house_price(features, "120703"))            # Send parameters to function for prediction
 
-    # Initialize Flask app
+    # Initialize Flask app to serve the web frontend
     app = Flask(__name__)
     port = "5000"
 
@@ -144,34 +161,10 @@ if __name__ == "__main__":
     # Define the route for the homepage
     @app.route('/')
     def home():
-        # return render_template('index.html')  # Use render_template
-        return render_template_string("""
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>HDB Resale Housing Price Guidance</title>
-            </head>
-            <body>
-                <h1>HDB Resale Housing Price Guidance</h1>
-                <p>This app provides a guide for the offering price of a HDB resale flat. The aim is to help buyers make a reasonable offer price for the flat of their choice. </p>
-                <form action="/predict" method="POST">
-                    <label for="postcode">Postal Code:</label><br>
-                    <input type="text" id="postcode" name="postcode"><br><br>
-                    <label for="sqm">Floor Area (in sqm):</label><br>
-                    <input type="text" id="sqm" name="sqm"><br><br>
-                    <label for="level">Floor Level:</label><br>
-                    <select id="level" name="level">
-                    <option value="1">Low</option>
-                    <option value="2">Mid</option>
-                    <option value="3">High</option>
-                    </select><br><br>
-                    <input type="submit" value="Submit">
-                </form>
-            </body>
-            </html>
-        """)
+        # Read the index.html file from the root folder instead of /templates folder (default of flask)
+        with open(os.path.join(os.getcwd(), 'index.html'), 'r') as file:
+            html_content = file.read()
+        return render_template_string(html_content)
 
     # Define the route to handle form submission
     @app.route('/predict', methods=['POST'])
@@ -183,32 +176,16 @@ if __name__ == "__main__":
             param3 = int(request.form['level'])
 
             # Make the prediction using the model
-            features = [0, param2, 0, 0, param3, 0, 0, 0, 0]            # Initialise the array
-            predicted_price = predict_house_price(features, param1)     # Send parameters to function for prediction
+            features = [0, param2, 0, 0, param3, 0, 0, 0, 0]                    # Initialise the array
+            predicted_price = predict_house_price(features, param1)             # Send parameters to function for prediction
 
-            # Return the result to the user
-            # return render_template('result.html', price=predicted_price)
-            return render_template_string("""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Transaction Price Guidance</title>
-                </head>
-                <body>
-                    <h1>A reasonable transaction price will be S${{ price }}</h1>
-                    <br>
-                    <a href="/">Go back</a>
-                </body>
-                </html>
-            """, price = predicted_price)
+            # Read the index.html file from the root folder instead of /templates folder (default of flask)
+            with open(os.path.join(os.getcwd(), 'result.html'), 'r') as file:
+                html_content = file.read()
+            return render_template_string(html_content, price=predicted_price)  # Return the result to the user
 
         except Exception as e:
             return f"Error: {str(e)}"
     
     # Start the Flask server in the main thread
     app.run(port=5000, use_reloader=False)
-    
-    # # Start the Flask server in a new thread
-    # threading.Thread(target=app.run, kwargs={"use_reloader": False}).start()
